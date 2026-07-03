@@ -96,15 +96,29 @@
   .chipgroups { display: flex; flex-direction: column; gap: 9px; margin-top: 14px; }
   .cgroup { display: flex; align-items: flex-start; gap: 12px; }
   .cgroup .glabel { flex-shrink: 0; width: 62px; padding-top: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: var(--faint); }
-  @media (max-width: 580px) { .cgroup { flex-direction: column; align-items: stretch; gap: 5px; } .cgroup .glabel { width: auto; padding-top: 0; } .chips { min-width: 0; max-width: 100%; } }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* 계열 선택 트리거 — 모바일 전용 접이식 */
+  .cattrigger { display: none; }
   @media (max-width: 580px) {
-    /* 모바일: 고정 해제(칩 영역이 화면을 덮는 것 방지) + 계열 칩은 가로 스크롤 */
     .controls { position: static; background: none; padding-top: 10px; }
     .search input { font-size: 16px; } /* iOS 포커스 확대 방지 */
-    .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-    .chips::-webkit-scrollbar { display: none; }
-    .chip { flex-shrink: 0; }
+    .cattrigger {
+      display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 12px;
+      font-family: inherit; font-size: 14px; font-weight: 600; color: var(--ink);
+      background: var(--panel); border: 1px solid var(--line); border-radius: 11px;
+      padding: 12px 15px; cursor: pointer; text-align: left;
+    }
+    .cattrigger .ct-cur { color: var(--accent); font-weight: 700; }
+    .cattrigger .ct-chev { margin-left: auto; flex-shrink: 0; transition: transform .22s; }
+    .cattrigger[aria-expanded="true"] .ct-chev { transform: rotate(180deg); }
+    .chipgroups { max-height: 0; overflow: hidden; margin-top: 0;
+      transition: max-height .34s cubic-bezier(.3,.7,.3,1), margin-top .34s; }
+    .chipgroups.open { max-height: 1400px; margin-top: 12px; }
+    .cgroup { flex-direction: column; align-items: stretch; gap: 6px; }
+    .cgroup .glabel { width: auto; padding-top: 0; }
+    /* 칩은 줄바꿈으로 전부 보이게 — 가려지지 않음 */
+    .chips { min-width: 0; max-width: 100%; }
   }
   .chip {
     font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--soft);
@@ -182,7 +196,7 @@
     <header>
       <div class="eyebrow">생활기록부 탐구활동 · 키워드 색인</div>
       <h1>탐구 키워드,<br><span class="light">진로 계열별로 펼쳐 보기</span></h1>
-      <p class="lead">탐구 주제의 방향을 잡을 때 참고하는 자료입니다. 같은 키워드라도 어느 교과에서 출발할 수 있는지와 함께, 분야를 넓게 보는 물음에서 우리 학교·반으로 좁혀 확인하고 더 깊게 파고드는 세 갈래 질문을 담았습니다. 지금 우리 사회가 실제로 씨름하는 문제 가운데, 한 학기 안에 시작해 마칠 수 있는 탐구를 기준으로 골랐습니다.</p>
+      <p class="lead">탐구 주제의 방향을 잡을 때 참고하는 자료입니다. 계열별로 키워드를 펼치고, 분야를 넓게 보는 물음에서 우리 학교·반으로 좁혀 확인하고 더 깊게 파고드는 세 갈래 질문을 담았습니다. 지금 우리 사회가 실제로 씨름하는 문제 가운데, 한 학기 안에 시작해 마칠 수 있는 탐구를 기준으로 골랐습니다.</p>
       <div class="guidebox">
         <button class="gtoggle" id="gtoggle" aria-expanded="false">
           탐구를 깊게 만드는 네 걸음, 그리고 사정관의 눈
@@ -191,7 +205,7 @@
         <div class="guidepanel" id="guidepanel">
           <div class="guideinner">
             <div class="steps">
-              <div class="step"><div class="n">1</div><div><div class="st">교과에서 출발한다</div><div class="sd">세특은 수업 활동의 기록입니다. 시사 키워드를 막연히 가져오기보다 수업에서 다룬 개념·작품·이론과 연결할 때 탐구의 뿌리가 분명해집니다. 카드의 <span class="pin">교과 태그</span>가 그 출발점입니다.</div></div></div>
+              <div class="step"><div class="n">1</div><div><div class="st">교과에서 출발한다</div><div class="sd">세특은 수업 활동의 기록입니다. 시사 키워드를 막연히 가져오기보다 <span class="pin">수업에서 다룬 개념·작품·이론</span>과 연결할 때 탐구의 뿌리가 분명해집니다.</div></div></div>
               <div class="step"><div class="n">2</div><div><div class="st">내 질문으로 좁힌다</div><div class="sd">남이 정해준 주제가 아니라 스스로 던진 물음에서 시작합니다. 분야를 <span class="pin">넓게</span> 보는 질문을 자기 관심사로 좁히는 순간, 탐구는 학생 자신의 것이 됩니다.</div></div></div>
               <div class="step"><div class="n">3</div><div><div class="st">직접 확인하고, 결과를 남긴다</div><div class="sd">검색 요약에 그치지 않고 설문·인터뷰·관찰·간단한 실험으로 작은 증거를 만듭니다. 우리 학교와 우리 반이 가장 좋은 현장이고, 만든 증거는 보고서·게시·전시 같은 산출물로 남길 때 실행의 흔적이 됩니다. 주제를 <span class="pin">좁게</span> 가져오는 질문이 그 출발점입니다.</div></div></div>
               <div class="step"><div class="n">4</div><div><div class="st">다음 질문으로 잇는다</div><div class="sd">한 번의 조사로 끝내지 않습니다. 발견에서 새 물음을 길어 올려 이론과 연결하거나 대안과 한계를 따집니다. 이 꼬리물기가 깊이를 만들고, 활동 전후로 내 생각이 어떻게 바뀌었는지 한 줄이 남으면 배움의 깊이가 분명해집니다. 더 <span class="pin">깊게</span> 파고드는 질문이 그 방향입니다.</div></div></div>
@@ -233,15 +247,15 @@
       <div class="searchrow">
         <div class="search">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
-          <input id="q" type="text" placeholder="키워드·교과·질문 검색 (예: 저속노화, 반도체, 화법과작문)" autocomplete="off" spellcheck="false">
+          <input id="q" type="text" placeholder="키워드·질문 검색 (예: 저속노화, 반도체, 돌봄)" autocomplete="off" spellcheck="false">
         </div>
         <div class="count"><b id="cnum">0</b>개 키워드</div>
       </div>
+      <button class="cattrigger" id="cattrigger" aria-expanded="false" aria-controls="chips">
+        <span>계열 · <span class="ct-cur" id="ctCur">모든 계열</span></span>
+        <svg class="ct-chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
       <div class="chipgroups" id="chips"></div>
-      <div class="subjbar" id="subjbar">
-        <span><span class="pill" id="subjpill"></span> 연계 키워드만 보는 중</span>
-        <button id="subjclear">전체 교과 보기</button>
-      </div>
     </div>
   </div>
 
@@ -601,7 +615,6 @@ const ALL = DATA.concat(DATA_B, DATA_C).sort((a, b) => CAT_RANK[a.cat] - CAT_RAN
 
 // State
 let activeCat = -1;     // -1 = 전체
-let activeSubj = null;  // 교과 필터
 let query = "";
 
 const grid = document.getElementById("grid");
@@ -610,9 +623,18 @@ const cnum = document.getElementById("cnum");
 const qInput = document.getElementById("q");
 const toast = document.getElementById("toast");
 const tmsg = document.getElementById("tmsg");
-const subjbar = document.getElementById("subjbar");
-const subjpill = document.getElementById("subjpill");
-const subjclear = document.getElementById("subjclear");
+const cattrigger = document.getElementById("cattrigger");
+const ctCur = document.getElementById("ctCur");
+
+// 모바일 접이식 계열 선택
+const isMobile = () => window.matchMedia("(max-width: 580px)").matches;
+function setCatPanel(open) {
+  chipsEl.classList.toggle("open", open);
+  cattrigger.setAttribute("aria-expanded", open ? "true" : "false");
+}
+cattrigger.addEventListener("click", () => {
+  setCatPanel(!chipsEl.classList.contains("open"));
+});
 
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function light(hex){
@@ -647,17 +669,19 @@ function buildChips() {
   chipsEl.querySelectorAll(".chip").forEach(chip => {
     chip.addEventListener("click", () => {
       activeCat = parseInt(chip.dataset.cat, 10);
-      activeSubj = null; // 계열 선택 시 교과 필터 해제
       updateChipStyles();
-      updateSubjBar();
+      // 트리거 라벨 갱신 + 모바일에서는 선택 후 자동으로 접기
+      ctCur.textContent = activeCat < 0 ? "모든 계열" : CATS[activeCat].name;
+      if (isMobile()) setCatPanel(false);
       render();
     });
   });
+  updateChipStyles(); // 초기 활성 칩(모든 계열) 배경 적용
 }
 function updateChipStyles() {
   chipsEl.querySelectorAll(".chip").forEach(c => {
     const ci = parseInt(c.dataset.cat, 10);
-    const on = ci === activeCat && !activeSubj;
+    const on = ci === activeCat;
     c.dataset.active = on ? "true" : "false";
     if (on && ci >= 0) c.style.background = CATS[ci].color;
     else if (on) c.style.background = "var(--ink)";
@@ -665,37 +689,17 @@ function updateChipStyles() {
   });
 }
 
-function updateSubjBar() {
-  if (activeSubj) {
-    subjbar.dataset.show = "true";
-    subjpill.textContent = activeSubj;
-  } else {
-    subjbar.dataset.show = "false";
-  }
-}
-subjclear.addEventListener("click", () => {
-  activeSubj = null;
-  updateChipStyles();
-  updateSubjBar();
-  render();
-});
-
 // 필터
 function filtered() {
   const q = query.trim().toLowerCase();
   return ALL.filter(d => {
-    if (activeSubj) {
-      if (!d.subj.split(" · ").includes(activeSubj)) return false;
-    } else if (activeCat >= 0 && d.cat !== activeCat) {
-      return false;
-    }
+    if (activeCat >= 0 && d.cat !== activeCat) return false;
     if (!q) return true;
     return (d.term.toLowerCase().includes(q)
       || d.desc.toLowerCase().includes(q)
       || d.macro.toLowerCase().includes(q)
       || d.micro.toLowerCase().includes(q)
       || d.deepen.toLowerCase().includes(q)
-      || d.subj.toLowerCase().includes(q)
       || CATS[d.cat].name.toLowerCase().includes(q));
   });
 }
@@ -712,12 +716,10 @@ function render() {
     const c = CATS[d.cat];
     const cl = light(c.color);
     const delay = Math.min(idx * 18, 320);
-    const subjTags = d.subj.split(" · ").map(s =>
-      `<span class="subj" data-subj="${esc(s)}">${esc(s)}</span>`).join("");
     return `<article class="card" style="--c:${c.color}; --cl:${cl}; animation-delay:${delay}ms" tabindex="0"
-      data-term="${esc(d.term)}" data-subj="${esc(d.subj)}" data-desc="${esc(d.desc)}"
+      data-term="${esc(d.term)}" data-desc="${esc(d.desc)}"
       data-macro="${esc(d.macro)}" data-micro="${esc(d.micro)}" data-deepen="${esc(d.deepen)}">
-      <div class="chead"><span class="term">${esc(d.term)}</span><span class="subjgroup" style="display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end">${subjTags}</span></div>
+      <div class="chead"><span class="term">${esc(d.term)}</span></div>
       <div class="desc">${esc(d.desc)}</div>
       <div class="qblock">
         <div class="q mac"><span class="lab lab-mac">넓게</span><span class="qt">${esc(d.macro)}</span></div>
@@ -729,19 +731,6 @@ function render() {
       </span>
     </article>`;
   }).join("");
-
-  // 교과 태그 클릭 → 해당 교과 필터
-  grid.querySelectorAll(".subj").forEach(tag => {
-    tag.addEventListener("click", (e) => {
-      e.stopPropagation();
-      activeSubj = tag.dataset.subj;
-      activeCat = -1;
-      updateChipStyles();
-      updateSubjBar();
-      render();
-      window.scrollTo({ top: document.querySelector(".controls").offsetTop - 10, behavior: "smooth" });
-    });
-  });
 
   // 카드 클릭 → 복사
   grid.querySelectorAll(".card").forEach(card => {
@@ -756,7 +745,7 @@ function render() {
 // 복사
 function copyCard(card) {
   const d = card.dataset;
-  const text = `${d.term} (${d.subj})\n${d.desc}\n넓게: ${d.macro}\n좁게: ${d.micro}\n깊게: ${d.deepen}`;
+  const text = `${d.term}\n${d.desc}\n넓게: ${d.macro}\n좁게: ${d.micro}\n깊게: ${d.deepen}`;
   copyText(text, `'${d.term}' 복사됨`);
 }
 function copyText(text, msg) {
